@@ -1,9 +1,3 @@
-//
-//  ContentView.swift
-//  Swift1
-//
-//  Created by esteban cubides on 6/5/25.
-//
 
 import SwiftUI
 

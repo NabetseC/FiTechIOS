@@ -30,19 +30,19 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		B3EE8B222DF237230097CFEC /* Swift1 */ = {
+		B3EE8B222DF237230097CFEC /* FiTechIOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Swift1;
+			path = FiTechIOS;
 			sourceTree = "<group>";
 		};
-		B3EE8B302DF237280097CFEC /* Swift1Tests */ = {
+		B3EE8B302DF237280097CFEC /* FiTechIOSTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Swift1Tests;
+			path = FiTechIOSTests;
 			sourceTree = "<group>";
 		};
-		B3EE8B3A2DF237280097CFEC /* Swift1UITests */ = {
+		B3EE8B3A2DF237280097CFEC /* FiTechIOSUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Swift1UITests;
+			path = FiTechIOSUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,9 +75,9 @@
 		B3EE8B172DF237230097CFEC = {
 			isa = PBXGroup;
 			children = (
-				B3EE8B222DF237230097CFEC /* Swift1 */,
-				B3EE8B302DF237280097CFEC /* Swift1Tests */,
-				B3EE8B3A2DF237280097CFEC /* Swift1UITests */,
+				B3EE8B222DF237230097CFEC /* FiTechIOS */,
+				B3EE8B302DF237280097CFEC /* FiTechIOSTests */,
+				B3EE8B3A2DF237280097CFEC /* FiTechIOSUITests */,
 				B3EE8B212DF237230097CFEC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -108,7 +108,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				B3EE8B222DF237230097CFEC /* Swift1 */,
+				B3EE8B222DF237230097CFEC /* FiTechIOS */,
 			);
 			name = Swift1;
 			packageProductDependencies = (
@@ -131,7 +131,7 @@
 				B3EE8B2F2DF237280097CFEC /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				B3EE8B302DF237280097CFEC /* Swift1Tests */,
+				B3EE8B302DF237280097CFEC /* FiTechIOSTests */,
 			);
 			name = Swift1Tests;
 			packageProductDependencies = (
@@ -154,7 +154,7 @@
 				B3EE8B392DF237280097CFEC /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				B3EE8B3A2DF237280097CFEC /* Swift1UITests */,
+				B3EE8B3A2DF237280097CFEC /* FiTechIOSUITests */,
 			);
 			name = Swift1UITests;
 			packageProductDependencies = (
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = B3EE8B1B2DF237230097CFEC /* Build configuration list for PBXProject "Swift1" */;
+			buildConfigurationList = B3EE8B1B2DF237230097CFEC /* Build configuration list for PBXProject "FiTechIOS" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -523,7 +523,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B3EE8B1B2DF237230097CFEC /* Build configuration list for PBXProject "Swift1" */ = {
+		B3EE8B1B2DF237230097CFEC /* Build configuration list for PBXProject "FiTechIOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3EE8B3F2DF237280097CFEC /* Debug */,

@@ -1,13 +1,7 @@
-//
-//  Swift1UITestsLaunchTests.swift
-//  Swift1UITests
-//
-//  Created by esteban cubides on 6/5/25.
-//
 
 import XCTest
 
-final class Swift1UITestsLaunchTests: XCTestCase {
+final class FiTechIOSUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

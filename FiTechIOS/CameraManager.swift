@@ -1,5 +1,6 @@
 import Foundation
 import AVFoundation
+import Vision
 
 class CameraManager: NSObject {
     private let captureSession = AVCaptureSession()
@@ -8,6 +9,13 @@ class CameraManager: NSObject {
     private let systemPreferredCamera = AVCaptureDevice.default(.builtInWideAngleCamera,
                                                                 for:.video,
                                                                 position: .front)
+    
+    // Body detection properties
+    private var bodyPoseRequest = VNDetectHumanBodyPoseRequest()
+    private var bodyDetectionRequest = VNDetectHumanRectanglesRequest()
+    
+    // Callback for body detection results
+    var onBodyDetection: ((VNHumanBodyPoseObservation?, VNHumanRectangleObservation?) -> Void)?
                      
     private var sessionQueue = DispatchQueue(label: "video.preview.session")
     
@@ -81,7 +89,16 @@ class CameraManager: NSObject {
                 // 7.
                 captureSession.addInput(deviceInput)
                 captureSession.addOutput(videoOutput)
-            
+                
+                // Configure video orientation
+                if let connection = videoOutput.connection(with: .video) {
+                    if connection.isVideoOrientationSupported {
+                        connection.videoOrientation = .portrait
+                    }
+                    if connection.isVideoMirroringSupported {
+                        connection.isVideoMirrored = true
+                    }
+                }
         }
         
         // 3.
@@ -98,6 +115,26 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
                        didOutput sampleBuffer: CMSampleBuffer,
                        from connection: AVCaptureConnection) {
         guard let currentFrame = sampleBuffer.cgImage else { return }
+        
+        // Create a new image-request handler
+        let requestHandler = VNImageRequestHandler(cgImage: currentFrame, orientation: .up)
+        
+        // Perform body detection
+        do {
+            try requestHandler.perform([bodyPoseRequest, bodyDetectionRequest])
+            
+            // Get the results
+            let poseObservation = bodyPoseRequest.results?.first
+            let bodyObservation = bodyDetectionRequest.results?.first
+            
+            // Pass results back through callback
+            DispatchQueue.main.async {
+                self.onBodyDetection?(poseObservation, bodyObservation)
+            }
+        } catch {
+            print("Failed to perform body detection: \(error)")
+        }
+        
         addToPreviewStream?(currentFrame)
     }
     

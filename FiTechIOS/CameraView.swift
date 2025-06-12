@@ -11,13 +11,13 @@ struct CameraView: View {
         GeometryReader { geometry in
             ZStack {
                 if let image = image {
-                    Image(decorative: image, scale: 1)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: geometry.size.width,
-                               height: geometry.size.height)
-                        .clipped()
-                } else {
+                Image(decorative: image, scale: 1)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geometry.size.width,
+                           height: geometry.size.height)
+                    .clipped()
+            } else {
                     ContentUnavailableView("No camera feed", systemImage: "xmark.circle.fill")
                         .frame(width: geometry.size.width,
                                height: geometry.size.height)

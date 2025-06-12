@@ -92,8 +92,8 @@ class CameraManager: NSObject {
                 
                 // Configure video orientation
                 if let connection = videoOutput.connection(with: .video) {
-                    if connection.isVideoOrientationSupported {
-                        connection.videoOrientation = .portrait
+                    if connection.isVideoRotationAngleSupported(90) {
+                        connection.videoRotationAngle = 90
                     }
                     if connection.isVideoMirroringSupported {
                         connection.isVideoMirrored = true

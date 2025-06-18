@@ -1,11 +1,3 @@
-//
-//  ContentView 2.swift
-//  FiTechIOS
-//
-//  Created by esteban cubides on 6/12/25.
-//
-
-
 import SwiftUI
 import AVFoundation
 import Vision

@@ -18,6 +18,16 @@ struct ContentView: View {
                 bodyParts: poseViewModel.detectedBodyParts,
                 connections: poseViewModel.bodyConnections
             )
+            if !poseViewModel.predictedLabel.isEmpty {
+                    Text(poseViewModel.predictedLabel)
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.black.opacity(0.6))
+                        .cornerRadius(12)
+                        .padding(.top, 50)
+                }
         }
         .task {
             await cameraViewModel.checkPermission()

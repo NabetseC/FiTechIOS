@@ -5,7 +5,7 @@ import SwiftUI
 struct FiTechIOSApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView()
         }
     }
 }

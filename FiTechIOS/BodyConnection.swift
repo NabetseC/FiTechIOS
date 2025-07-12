@@ -4,6 +4,10 @@ import Vision
 import AVFoundation
 import Observation
 
+struct AngleFrame{
+    let angles: [Double]
+}
+
 // 1.
 struct BodyConnection: Identifiable {
     let id = UUID()
@@ -11,14 +15,55 @@ struct BodyConnection: Identifiable {
     let to: HumanBodyPoseObservation.JointName
 }
 
+//this is more like a buffer for poses than a long term saver
+struct PoseSaver{
+    var poseFrames: [[HumanBodyPoseObservation.JointName: CGPoint]] = []
+    
+    mutating func addFrame(_ joints: [HumanBodyPoseObservation.JointName: CGPoint]){
+        poseFrames.append(joints)
+    }
+    mutating func clear(){
+        poseFrames.removeAll()
+    }
+}
+
 @Observable
 class PoseEstimationViewModel: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
-
+    
+    var triggerCoach: (()->Void)?
     // 2.
     var detectedBodyParts: [HumanBodyPoseObservation.JointName: CGPoint] = [:]
     var bodyConnections: [BodyConnection] = []
     
-    override init() {
+    var angleBuffer: [AngleFrame] = []
+    let predictionModel = try? GRUsmd(configuration: .init())
+    var predictedLabel: String = ""
+    
+    var soundPlayer: AVAudioPlayer!
+    
+    var span = 6
+    var currentTime = 0
+    var mem: lessonMemory = lessonMemory()
+    var minimumScore = 0.5
+    var poseSaver = PoseSaver()
+    
+
+    
+    
+    func playSound(soundToPlay: String) {
+        if let url = Bundle.main.url(forResource: soundToPlay, withExtension: "mp3"){
+            do {
+                soundPlayer = try! AVAudioPlayer(contentsOf: url)
+                
+                soundPlayer.play()
+            }
+        }else{
+            print("Error, can't find the sound boss!")
+        }
+    }
+    
+    init(triggerCoach: (()->Void)? = nil) {
+        self.triggerCoach =  triggerCoach
         super.init()
         setupBodyConnections()
     }
@@ -49,6 +94,25 @@ class PoseEstimationViewModel: NSObject, AVCaptureVideoDataOutputSampleBufferDel
             if let detectedPoints = await processFrame(sampleBuffer) {
                 DispatchQueue.main.async {
                     self.detectedBodyParts = detectedPoints
+                    
+                    let angles = self.computeAngles(from: detectedPoints)
+                    guard angles.count == 8 else {
+                        self.angleBuffer.removeAll()
+                        self.poseSaver.clear()
+                        return
+                    }
+
+                    self.angleBuffer.append(AngleFrame(angles: angles))
+                    self.poseSaver.addFrame(detectedPoints)
+
+                    if self.angleBuffer.count == 40 {
+                        self.makePrediction()
+                        //self.poseSaver.addPose(self.angleBuffer)
+                        
+                        self.angleBuffer.removeAll() // ✅ reset buffer
+                        self.poseSaver.clear()
+                        self.playSound(soundToPlay: "tick")
+                    }
                 }
             }
         }
@@ -87,5 +151,112 @@ class PoseEstimationViewModel: NSObject, AVCaptureVideoDataOutputSampleBufferDel
             }
         }
         return detectedPoints
+    }
+    private func computeAngles(from joints: [HumanBodyPoseObservation.JointName: CGPoint]) -> [Double] {
+            func angleBetween(_ a: CGPoint, _ b: CGPoint, _ c: CGPoint) -> Double {
+                let ab = CGVector(dx: b.x - a.x, dy: b.y - a.y)
+                let cb = CGVector(dx: b.x - c.x, dy: b.y - c.y)
+                let dotProduct = ab.dx * cb.dx + ab.dy * cb.dy
+                let abMag = sqrt(ab.dx * ab.dx + ab.dy * ab.dy)
+                let cbMag = sqrt(cb.dx * cb.dx + cb.dy * cb.dy)
+                let angle = acos(dotProduct / max(abMag * cbMag, 1e-5)) / .pi
+                return angle
+            }
+
+        guard
+            // Right-side joints
+            let rshoulder = joints[.rightShoulder],
+            let relbow = joints[.rightElbow],
+            let rwrist = joints[.rightWrist],
+            let rhip = joints[.rightHip],
+            let rknee = joints[.rightKnee],
+            let rankle = joints[.rightAnkle],
+
+            // Left-side joints
+            let lshoulder = joints[.leftShoulder],
+            let lelbow = joints[.leftElbow],
+            let lwrist = joints[.leftWrist],
+            let lhip = joints[.leftHip],
+            let lknee = joints[.leftKnee],
+            let lankle = joints[.leftAnkle]
+
+        else {
+            return []
+        }
+
+        return [
+            // Right side angles
+            angleBetween(rshoulder, relbow, rwrist),
+            angleBetween(relbow, rshoulder, rhip),
+            angleBetween(rshoulder, rhip, rknee),
+            angleBetween(rhip, rknee, rankle),
+
+            // Left side angles
+            angleBetween(lshoulder, lelbow, lwrist),
+            angleBetween(lelbow, lshoulder, lhip),
+            angleBetween(lshoulder, lhip, lknee),
+            angleBetween(lhip, lknee, lankle)
+        ]
+        }
+    func makePrediction() {
+        guard let model = predictionModel else { return }
+
+        let inputArray = angleBuffer.flatMap { $0.angles }
+        let mlArray = try? MLMultiArray(shape: [1, 40, 8], dataType: .double)
+
+        for (index, value) in inputArray.enumerated() {
+            mlArray?[index] = NSNumber(value: value)
+        }
+
+        guard let input = try? GRUsmdInput(input_3: mlArray!) else { return }
+        guard let result = try? model.prediction(input: input) else { return }
+
+        // Replace "output" with your model’s actual output name
+        let outputArray = result.Identity
+        let floatValues = (0..<outputArray.count).map { outputArray[$0].floatValue }
+
+        if let predictedIndex = floatValues.enumerated().max(by: { $0.element < $1.element })?.offset {
+            let val_pred = [
+                "good jab", "bad jab, lack of backfoot rotation",
+                "good straight", "bad straight",
+                "good rest", "bad rest",
+                "good kick", "bad kick"
+            ]
+            // ATTENTION futre me, I am hardcoding good jab in to this lecture, fix that when you finish the thing you are doing
+            
+            let predictedLabel = val_pred[predictedIndex]
+            if predictedLabel != "good jab"{
+                mem.updatePoseMem(pose: poseSaver.poseFrames)
+            }
+                    
+            print("Prediction: \(predictedLabel)")
+            currentTime += 1
+            mem.updateMem(label: predictedLabel)
+            if currentTime == span {
+                let result = mem.getScoreShort(goal: ["good jab"], max: span)
+                mem.resetShortMem()
+                currentTime = 0
+                if result <= minimumScore{
+                    print("bad job")
+                    //play bad sound and pause prediction (in theory this should
+                    // open a new window or cause some event that will allow us to pause
+                    // predictio/ lesson time naturally
+                    // for now use bad sound only
+                    //invoke ai chatbot with speech to give feedback
+                    triggerCoach?()
+                    mem.startTimer()
+                }
+                else {
+                    //play a nice sound!
+                    print("good job!")
+                }
+                poseSaver.clear()
+                
+            }
+            
+            DispatchQueue.main.async {
+                        self.predictedLabel = predictedLabel
+            }
+        }
     }
 }

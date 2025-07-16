@@ -20,6 +20,7 @@ class lessonMemory {
     var longTermMem: [String: Int]
     var shortTermMem: [String: Int]
     var poseMem: [[[HumanBodyPoseObservation.JointName: CGPoint]]] = []
+    var localChatHistory: [ChatMessage] = []
     var displayedPose: [HumanBodyPoseObservation.JointName: CGPoint]?
     var moveIndex = 0
     var frameIndex = 0
@@ -42,6 +43,9 @@ class lessonMemory {
     
     func updatePoseMem(pose: [[HumanBodyPoseObservation.JointName: CGPoint]]){
         poseMem.append(pose)
+    }
+    func updateChatHistory(message: ChatMessage){
+        localChatHistory.append(message)
     }
     
     func getScoreShort(goal: [String], max: Int) -> Double{

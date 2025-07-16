@@ -24,8 +24,14 @@ struct HomeView: View {
                                     NavigationLink(destination: LessonScreen()){
                         StyleSquare(title: "Lesson 1",
                                     description: "Jab",
-                                    backgroundColor: Color(red: 0.267, green: 0.208, blue: 0.384) )
+                                    backgroundColor: Color(red: 0.267, green: 0.208, blue: 0.384),
+                                    size: 0.9)
                     }
+                        StyleSquare(title: "Lesson 1",
+                            description: "Jab",
+                            backgroundColor: Color(red: 0.267, green: 0.208, blue: 0.384),
+                            size: 0.9)
+
                 }
             }
         }

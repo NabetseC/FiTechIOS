@@ -233,23 +233,38 @@ class PoseEstimationViewModel: NSObject, AVCaptureVideoDataOutputSampleBufferDel
             currentTime += 1
             mem.updateMem(label: predictedLabel)
             if currentTime == span {
+                var command = ""
                 let result = mem.getScoreShort(goal: ["good jab"], max: span)
-                mem.resetShortMem()
-                currentTime = 0
                 if result <= minimumScore{
                     print("bad job")
-                    //play bad sound and pause prediction (in theory this should
-                    // open a new window or cause some event that will allow us to pause
-                    // predictio/ lesson time naturally
-                    // for now use bad sound only
-                    //invoke ai chatbot with speech to give feedback
                     triggerCoach?()
                     mem.startTimer()
                 }
                 else {
-                    //play a nice sound!
-                    print("good job!")
+                    if result < 1 {
+                        command = "fix"
+                    }
+                    else{
+                        command = "compliment"
+                        
+                    }
+                    fetchChatResponse(userInput: "\(mem.shortTermMem) \(command)", asRole: "user") {response in
+                        
+                        DispatchQueue.main.async{
+                            fetchTTS(text: response ?? "No response") { url in
+                                if let url = url{
+                                    audioManager.playAudio(from: url){
+                                        //start listening to voice
+                                    }
+                                }
+                                
+                            }
+                            self.mem.updateChatHistory(message: ChatMessage(role:"assistant", content: response ?? "No response"))
+                        }
+                    }
                 }
+                mem.resetShortMem()
+                currentTime = 0
                 poseSaver.clear()
                 
             }

@@ -24,6 +24,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B36EE97E2E25E02A004BD20D /* Swift1-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Swift1-Info.plist"; sourceTree = "<group>"; };
 		B3EE8B202DF237230097CFEC /* Swift1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swift1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3EE8B2D2DF237280097CFEC /* Swift1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Swift1Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3EE8B372DF237280097CFEC /* Swift1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Swift1UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -75,6 +76,7 @@
 		B3EE8B172DF237230097CFEC = {
 			isa = PBXGroup;
 			children = (
+				B36EE97E2E25E02A004BD20D /* Swift1-Info.plist */,
 				B3EE8B222DF237230097CFEC /* FiTechIOS */,
 				B3EE8B302DF237280097CFEC /* FiTechIOSTests */,
 				B3EE8B3A2DF237280097CFEC /* FiTechIOSUITests */,
@@ -400,7 +402,8 @@
 				DEVELOPMENT_TEAM = S445D7PXHG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "$(PRODUCT_NAME) needs to use camera for body detection";
+				INFOPLIST_FILE = "Swift1-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Swift1 needs to use camera for body detection";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -429,7 +432,8 @@
 				DEVELOPMENT_TEAM = S445D7PXHG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "$(PRODUCT_NAME) needs to use camera for body detection";
+				INFOPLIST_FILE = "Swift1-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Swift1 needs to use camera for body detection";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
